@@ -33,48 +33,6 @@ import {
   Resizable,
 } from "react-timeseries-charts";
 
-import aapl from "./aapl_historical.json";
-
-//
-// Price: High, low, open, close
-//
-
-const name = "AAPL-price";
-const columns = ["time", "open", "close", "low", "high"];
-const events = aapl.map((item) => {
-  const timestamp = moment(new Date(item.date));
-  const { open, close, low, high } = item;
-  return new TimeEvent(timestamp.toDate(), {
-    open: +open,
-    close: +close,
-    low: +low,
-    high: +high,
-  });
-});
-const collection = new Collection(events);
-const sortedCollection = collection.sortByTime();
-const series = new TimeSeries({ name, columns, collection: sortedCollection });
-
-//
-// Volume
-//
-
-const volumeEvents = aapl.map((item) => {
-  const index = item.date.replace(/\//g, "-");
-  const { volume } = item;
-  return new IndexedEvent(index, { volume: +volume });
-});
-const volumeCollection = new Collection(volumeEvents);
-const sortedVolumeCollection = volumeCollection.sortByTime();
-
-const seriesVolume = new TimeSeries({
-  name: "AAPL-volume",
-  utc: false,
-  collection: sortedVolumeCollection,
-});
-
-[series, seriesVolume].log();
-
 const StockTimeSeries = ({ data, metadata }) => {
   const name = metadata.name;
   const columns = ["time", "open", "close", "low", "high"];
@@ -135,8 +93,14 @@ class Stockchart extends React.Component {
 
     let { data, metadata } = this.props;
     this.sts = StockTimeSeries({ data, metadata });
-    this.sts.series.range().log("data range");
-    // console.log(this.sts);
+  }
+
+  UNSAFE_componentWillReceiveProps(newProps) {
+    if (newProps.tickerCode !== this.props.tickerCode) {
+      let { data, metadata } = newProps;
+      this.sts = StockTimeSeries({ data, metadata });
+      return true;
+    }
   }
 
   handleTimeRangeChange = (timerange) => {
@@ -249,7 +213,6 @@ class Stockchart extends React.Component {
         <div className="row">
           <div className="col-md-12">
             <Resizable>{this.renderChart()}</Resizable>
-            <pre>{JSON.stringify(aapl[aapl.length - 1], null, 2)}</pre>
           </div>
         </div>
       </div>

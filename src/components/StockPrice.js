@@ -97,8 +97,13 @@ const StockPrice = () => {
       />
 
       <h2>{metadata?.name}</h2>
+
       {stockData && metadata && (
-        <Stockchart data={stockData} metadata={metadata} />
+        <Stockchart
+          tickerCode={metadata.dataset_code}
+          data={stockData}
+          metadata={metadata}
+        />
       )}
 
       <pre>{stockData && JSON.stringify(stockData[1], null, 2)}</pre>
