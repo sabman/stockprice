@@ -10,7 +10,7 @@
 
 /* eslint-disable */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import moment from "moment";
 
 // Pond
@@ -78,146 +78,149 @@ const StockTimeSeries = ({ data, metadata }) => {
   };
 };
 
-class Stockchart extends React.Component {
-  constructor(props) {
-    super(props);
-    this.props.metadata.log("metadata");
-    this.state = {
-      mode: "log",
-      timerange: new TimeRange([
-        props.metadata["oldest_available_date"],
-        props.metadata["newest_available_date"],
-      ]),
-    };
-    this.state.timerange.log("metadata range");
+function Stockchart(props) {
+  let { data, metadata, tickerCode } = props;
 
-    let { data, metadata } = this.props;
-    this.sts = StockTimeSeries({ data, metadata });
-  }
+  const [state, setState] = useState({
+    mode: "linear",
+    timerange: new TimeRange([
+      metadata["oldest_available_date"],
+      metadata["newest_available_date"],
+    ]),
+    sts: StockTimeSeries({ data, metadata }),
+  });
 
-  UNSAFE_componentWillReceiveProps(newProps) {
-    if (newProps.tickerCode !== this.props.tickerCode) {
-      let { data, metadata } = newProps;
-      this.sts = StockTimeSeries({ data, metadata });
-      return true;
+  useEffect(() => {
+    if (!tickerCode) {
+      return;
     }
-  }
 
-  handleTimeRangeChange = (timerange) => {
-    this.setState({ timerange });
-  };
+    setState({
+      mode: "linear",
+      timerange: new TimeRange([
+        metadata["oldest_available_date"],
+        metadata["newest_available_date"],
+      ]),
+      sts: StockTimeSeries({ data, metadata }),
+    });
 
-  setModeLinear = () => {
-    this.setState({ mode: "linear" });
-  };
-
-  setModeLog = () => {
-    this.setState({ mode: "log" });
-  };
-
-  renderChart = () => {
-    const { timerange } = this.state;
-    const croppedSeries = this.sts.series.crop(timerange);
-    const croppedVolumeSeries = this.sts.seriesVolume.crop(timerange);
-    return (
-      <ChartContainer
-        timeRange={timerange}
-        hideWeekends={true}
-        enablePanZoom={true}
-        onTimeRangeChanged={this.handleTimeRangeChange}
-        timeAxisStyle={{ axis: { fill: "none", stroke: "none" } }}
-      >
-        <ChartRow height="300">
-          <Charts>
-            <LineChart
-              axis="y"
-              style={{ close: { normal: { stroke: "steelblue" } } }}
-              columns={["close"]}
-              series={croppedSeries}
-              interpolation="curveBasis"
-            />
-          </Charts>
-          <YAxis
-            id="y"
-            label="Price ($)"
-            min={croppedSeries.min("close")}
-            max={croppedSeries.max("close")}
-            format=",.0f"
-            width="60"
-            type={this.state.mode}
-          />
-        </ChartRow>
-        <ChartRow height="200" axisMargin={0}>
-          <Charts>
-            <BarChart
-              axis="y"
-              style={{ volume: { normal: { stroke: "steelblue" } } }}
-              columns={["volume"]}
-              series={croppedVolumeSeries}
-            />
-          </Charts>
-          <YAxis
-            id="y"
-            label="Volume"
-            min={croppedVolumeSeries.min("volume")}
-            max={croppedVolumeSeries.max("volume")}
-            width="60"
-          />
-        </ChartRow>
-      </ChartContainer>
-    );
-  };
-
-  render() {
-    const linkStyle = {
-      fontWeight: 600,
-      color: "grey",
-      cursor: "default",
+    return () => {
+      // cleanup
     };
+  }, [props]);
 
-    const linkStyleActive = {
-      color: "steelblue",
-      cursor: "pointer",
-    };
+  const handleTimeRangeChange = (timerange) => {
+    setState({ ...state, timerange });
+  };
 
-    return (
-      <div>
-        <div className="row">
-          <div className="col-md-12">
-            <h3>{this.props.metadata.name}</h3>
-          </div>
-        </div>
+  const setModeLinear = () => {
+    setState({ ...state, mode: "linear" });
+  };
 
-        <hr />
+  const setModeLog = () => {
+    setState({ ...state, mode: "log" });
+  };
 
-        <div className="row">
-          <div className="col-md-12" style={{ fontSize: 14, color: "#777" }}>
-            <span
-              style={this.state.mode === "log" ? linkStyleActive : linkStyle}
-              onClick={this.setModeLinear}
-            >
-              Linear
-            </span>
-            <span> | </span>
-            <span
-              style={this.state.mode === "linear" ? linkStyleActive : linkStyle}
-              onClick={this.setModeLog}
-            >
-              Log
-            </span>
-          </div>
-        </div>
+  const { timerange } = state;
+  const croppedSeries = state.sts.series.crop(timerange);
+  const croppedVolumeSeries = state.sts.seriesVolume.crop(timerange);
 
-        <hr />
+  const linkStyle = {
+    fontWeight: 600,
+    color: "grey",
+    cursor: "default",
+  };
 
-        <div className="row">
-          <div className="col-md-12">
-            <Resizable>{this.renderChart()}</Resizable>
-          </div>
+  const linkStyleActive = {
+    color: "steelblue",
+    cursor: "pointer",
+  };
+
+  return (
+    <div>
+      <div className="row">
+        <div className="col-md-12">
+          <div
+            dangerouslySetInnerHTML={{ __html: props.metadata.description }}
+          ></div>
         </div>
       </div>
-    );
-  }
+
+      <hr />
+
+      <div className="row">
+        <div className="col-md-12" style={{ fontSize: 14, color: "#777" }}>
+          <span
+            style={state.mode === "log" ? linkStyleActive : linkStyle}
+            onClick={setModeLinear}
+          >
+            Linear
+          </span>
+          <span> | </span>
+          <span
+            style={state.mode === "linear" ? linkStyleActive : linkStyle}
+            onClick={setModeLog}
+          >
+            Log
+          </span>
+        </div>
+      </div>
+
+      <hr />
+
+      <div className="row">
+        <div className="col-md-12">
+          <Resizable>
+            <ChartContainer
+              timeRange={timerange}
+              hideWeekends={true}
+              enablePanZoom={true}
+              onTimeRangeChanged={handleTimeRangeChange}
+              timeAxisStyle={{ axis: { fill: "none", stroke: "none" } }}
+            >
+              <ChartRow height="300">
+                <Charts>
+                  <LineChart
+                    axis="y"
+                    style={{ close: { normal: { stroke: "steelblue" } } }}
+                    columns={["close"]}
+                    series={croppedSeries}
+                    interpolation="curveBasis"
+                  />
+                </Charts>
+                <YAxis
+                  id="y"
+                  label="Price ($)"
+                  min={croppedSeries.min("close")}
+                  max={croppedSeries.max("close")}
+                  format=",.0f"
+                  width="60"
+                  type={state.mode}
+                />
+              </ChartRow>
+              <ChartRow height="200" axisMargin={0}>
+                <Charts>
+                  <BarChart
+                    axis="y"
+                    style={{ volume: { normal: { stroke: "steelblue" } } }}
+                    columns={["volume"]}
+                    series={croppedVolumeSeries}
+                  />
+                </Charts>
+                <YAxis
+                  id="y"
+                  label="Volume"
+                  min={croppedVolumeSeries.min("volume")}
+                  max={croppedVolumeSeries.max("volume")}
+                  width="60"
+                />
+              </ChartRow>
+            </ChartContainer>
+          </Resizable>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default Stockchart;
