@@ -3,11 +3,13 @@ import StockPrice from "./components/StockPrice.js";
 
 function App() {
   return (
-    <div className="">
-      <header className="">Stock Price Checker</header>
+    <section className="section">
+      <div className="container">
+        <h1 className="title">Stock Price Checker</h1>
 
-      <StockPrice />
-    </div>
+        <StockPrice />
+      </div>
+    </section>
   );
 }
 
