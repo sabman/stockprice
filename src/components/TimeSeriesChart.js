@@ -15,10 +15,15 @@ import {
   LineChart,
   BarChart,
   Resizable,
+  EventMarker,
 } from "react-timeseries-charts";
 import StockTimeSeries from "../services/StockTimeSeries";
 
-function Stockchart(props) {
+const NullMarker = (props) => {
+  return <g />;
+};
+
+const Stockchart = (props) => {
   const { data, metadata, tickerCode } = props;
 
   const [selectedDate, setSelectedDate] = useState({
@@ -33,7 +38,48 @@ function Stockchart(props) {
     ]),
     sts: StockTimeSeries({ data, metadata }),
   });
+  const [trackerState, setTrackerState] = useState({
+    tracker: null,
+    trackerValue: "-- USD",
+    trackerEvent: null,
+  });
 
+  const handleTrackerChanged = (t) => {
+    if (t && croppedSeries) {
+      const e = croppedSeries.atTime(t);
+      const eventTime = new Date(
+        e.begin().getTime() + (e.end().getTime() - e.begin().getTime()) / 2
+      );
+      const eventValue = e.get("close");
+      const v = `${eventValue} USD`;
+      setTrackerState({ tracker: eventTime, trackerValue: v, trackerEvent: e });
+    } else {
+      setTrackerState({
+        tracker: null,
+        trackerValue: null,
+        trackerEvent: null,
+      });
+    }
+  };
+
+  const renderMarker = () => {
+    if (!trackerState.tracker) {
+      return <NullMarker />;
+    }
+    return (
+      <EventMarker
+        type="flag"
+        axis="y"
+        event={trackerState.trackerEvent}
+        column="close"
+        info={[{ label: "closing", value: trackerState.trackerValue }]}
+        infoTimeFormat="%B %d, %Y"
+        infoWidth={120}
+        markerRadius={2}
+        markerStyle={{ fill: "black" }}
+      />
+    );
+  };
   useEffect(() => {
     if (!tickerCode) {
       return;
@@ -158,6 +204,7 @@ function Stockchart(props) {
               enablePanZoom={true}
               onTimeRangeChanged={handleTimeRangeChange}
               timeAxisStyle={{ axis: { fill: "none", stroke: "none" } }}
+              onTrackerChanged={handleTrackerChanged}
             >
               <ChartRow height="300">
                 <Charts>
@@ -168,6 +215,7 @@ function Stockchart(props) {
                     series={croppedSeries}
                     interpolation="curveBasis"
                   />
+                  {renderMarker()}
                 </Charts>
                 <YAxis
                   id="y"
@@ -210,6 +258,6 @@ function Stockchart(props) {
       </div>
     </div>
   );
-}
+};
 
 export default Stockchart;
