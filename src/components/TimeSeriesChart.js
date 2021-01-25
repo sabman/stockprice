@@ -24,8 +24,10 @@ const NullMarker = (props) => {
 };
 
 const Stockchart = (props) => {
+  // props
   const { data, metadata, tickerCode } = props;
 
+  // State
   const [selectedDate, setSelectedDate] = useState({
     startDate: moment(metadata["oldest_available_date"]),
     endDate: moment(metadata["newest_available_date"]),
@@ -44,42 +46,7 @@ const Stockchart = (props) => {
     trackerEvent: null,
   });
 
-  const handleTrackerChanged = (t) => {
-    if (t && croppedSeries) {
-      const e = croppedSeries.atTime(t);
-      const eventTime = new Date(
-        e.begin().getTime() + (e.end().getTime() - e.begin().getTime()) / 2
-      );
-      const eventValue = e.get("close");
-      const v = `${eventValue} USD`;
-      setTrackerState({ tracker: eventTime, trackerValue: v, trackerEvent: e });
-    } else {
-      setTrackerState({
-        tracker: null,
-        trackerValue: null,
-        trackerEvent: null,
-      });
-    }
-  };
-
-  const renderMarker = () => {
-    if (!trackerState.tracker) {
-      return <NullMarker />;
-    }
-    return (
-      <EventMarker
-        type="flag"
-        axis="y"
-        event={trackerState.trackerEvent}
-        column="close"
-        info={[{ label: "closing", value: trackerState.trackerValue }]}
-        infoTimeFormat="%B %d, %Y"
-        infoWidth={120}
-        markerRadius={2}
-        markerStyle={{ fill: "black" }}
-      />
-    );
-  };
+  // lifecycle hooks:
   useEffect(() => {
     if (!tickerCode) {
       return;
@@ -100,7 +67,30 @@ const Stockchart = (props) => {
     };
   }, [props]);
 
+  // event handlers
+  const handleTrackerChanged = (t) => {
+    if (t && croppedSeries) {
+      const e = croppedSeries.atTime(t);
+      const eventTime = new Date(
+        e.begin().getTime() + (e.end().getTime() - e.begin().getTime()) / 2
+      );
+      const eventValue = e.get("close");
+      const v = `${eventValue} USD`;
+      setTrackerState({ tracker: eventTime, trackerValue: v, trackerEvent: e });
+    } else {
+      setTrackerState({
+        tracker: null,
+        trackerValue: null,
+        trackerEvent: null,
+      });
+    }
+  };
+
   const handleTimeRangeChange = (timerange) => {
+    setSelectedDate({
+      startDate: moment(timerange.begin()),
+      endDate: moment(timerange.end()),
+    });
     setState({ ...state, timerange });
   };
 
@@ -121,15 +111,39 @@ const Stockchart = (props) => {
   };
 
   const resetDateRange = () => {
+    const timerange = new TimeRange([
+      metadata["oldest_available_date"],
+      metadata["newest_available_date"],
+    ]);
     setSelectedDate({
-      startDate: moment(metadata["oldest_available_date"]),
-      endDate: moment(metadata["newest_available_date"]),
+      startDate: moment(timerange.begin()),
+      endDate: moment(timerange.end()),
     });
+    setState({ ...state, timerange });
   };
 
+  // helpers
   let croppedSeries = state.sts.series.crop(state.timerange);
   let croppedVolumeSeries = state.sts.seriesVolume.crop(state.timerange);
 
+  const renderMarker = () => {
+    if (!trackerState.tracker) {
+      return <NullMarker />;
+    }
+    return (
+      <EventMarker
+        type="flag"
+        axis="y"
+        event={trackerState.trackerEvent}
+        column="close"
+        info={[{ label: "closing", value: trackerState.trackerValue }]}
+        infoTimeFormat="%B %d, %Y"
+        infoWidth={120}
+        markerRadius={2}
+        markerStyle={{ fill: "black" }}
+      />
+    );
+  };
   const linkStyle = {
     fontWeight: 600,
     color: "grey",
@@ -144,7 +158,6 @@ const Stockchart = (props) => {
   return (
     <div>
       <hr />
-
       <nav className="level">
         <div className="level-left">
           <p className="level-item">
@@ -171,7 +184,6 @@ const Stockchart = (props) => {
             </button>
           </p>
         </div>
-
         <div className="level-right">
           <p className="level-item">
             <span
@@ -192,7 +204,6 @@ const Stockchart = (props) => {
       </nav>
 
       <hr />
-
       <div className="columns">
         <div className="column">
           <Resizable>

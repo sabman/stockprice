@@ -34,15 +34,20 @@ const StockPrice = () => {
     });
 
     return () => {
-      // cleanup
+      // TODO: cleanup
     };
   }, [metadata]);
+
+  const getOptionLabel = ({ dataset_code, name }) =>
+    `${dataset_code} - ${name}`;
+
+  const getOptionValue = ({ dataset_code }) => dataset_code;
 
   return (
     <div>
       <Select
-        getOptionLabel={({ dataset_code, name }) => `${dataset_code} - ${name}`}
-        getOptionValue={({ dataset_code }) => dataset_code}
+        getOptionLabel={getOptionLabel}
+        getOptionValue={getOptionValue}
         onChange={(d) => setMetadata(d)}
         defaultOptions
         placeholder={
