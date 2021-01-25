@@ -2372,6 +2372,11 @@ aria-query@^4.2.2:
     "@babel/runtime" "^7.10.2"
     "@babel/runtime-corejs3" "^7.10.2"
 
+arima@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/arima/-/arima-0.2.1.tgz#1f29a9b4910a9105cffd38d2f2e62663ef7eaefd"
+  integrity sha512-gi8zcWBkGeIaXZ9711Uvn5tYgwy48OLgQEnOTKil4a8fuMfie31UC8zhe3CYqorV8pFlQZqEX2i5B8Pu5nk3jA==
+
 arity-n@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/arity-n/-/arity-n-1.0.4.tgz#d9e76b11733e08569c0847ae7b39b2860b30b745"
@@ -8105,6 +8110,31 @@ onetime@^5.1.0:
   integrity sha512-kbpaSSGJTWdAY5KPVeMOKXSrPtr8C8C7wodJbcsd51jRnmD+GZu8Y0VoU6Dm5Z4vWr0Ig/1NKuWRKf7j5aaYSg==
   dependencies:
     mimic-fn "^2.1.0"
+
+online-autocorrelation@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/online-autocorrelation/-/online-autocorrelation-0.0.1.tgz#9588c0db30b690d4e2869ef7b15bc872bbaaf35b"
+  integrity sha512-6Jq3M31l+GKkOt91K7ahURmDvvawFOqbyHBerKUUAjNbO8DzL8k1nU3YmmwKMMchBis0G+yU9tem1aHAl7PyPg==
+  dependencies:
+    online-autocovariance "0.0.1"
+
+online-autocovariance@0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/online-autocovariance/-/online-autocovariance-0.0.1.tgz#d7882f09dc617916012842fd4ba45b1f639d45ae"
+  integrity sha512-AMgPQgdG5YkWcH6bqZnJCAAlbXR9zYS/WVtHoS6mmt9TaGidbM+g7oNFUSB/EYCTn05Xxoy4kC1jjLDOCcr3AQ==
+  dependencies:
+    online-lag "0.0.3"
+    online-mean "^1.1.2"
+
+online-lag@0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/online-lag/-/online-lag-0.0.3.tgz#cd07334064dff7f10ba51c0dda9ab90be6879838"
+  integrity sha512-pM1+lzr3ev3wAPqfIgSAE5rBQTgSoGZgyhDUAee3/PJk4hjKZmkPqLX/76HHT4gzokHRQ7Rc2/NXAZoNaHOYdw==
+
+online-mean@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/online-mean/-/online-mean-1.1.2.tgz#37f9624e4980a795aadac700e2e81a9d19573b68"
+  integrity sha512-RhIZLdTtFDpW9YZGxaNKim7PqFHX07TtUh6g9Q/8SQaonjGZRmfy+zE5gp+wqu8pk0fL5Bmhs7QcpSve3ftwvg==
 
 open@^7.0.2:
   version "7.3.0"
