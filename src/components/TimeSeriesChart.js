@@ -136,7 +136,7 @@ const Stockchart = (props) => {
         axis="y"
         event={trackerState.trackerEvent}
         column="close"
-        info={[{ label: "closing", value: trackerState.trackerValue }]}
+        info={[{ label: "close", value: trackerState.trackerValue }]}
         infoTimeFormat="%B %d, %Y"
         infoWidth={120}
         markerRadius={2}
