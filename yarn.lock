@@ -11472,10 +11472,10 @@ upath@^1.1.1, upath@^1.1.2, upath@^1.2.0:
   resolved "https://registry.yarnpkg.com/upath/-/upath-1.2.0.tgz#8f66dbcd55a883acdae4408af8b035a5044c1894"
   integrity sha512-aZwGpamFO61g3OlfT7OQCHqhGnW43ieH9WZeP7QxN/G/jS4jfqUkZxoryvJgVPEcrl5NL/ggHsSmLMHuH64Lhg==
 
-uplot@^1.6.1:
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/uplot/-/uplot-1.6.1.tgz#68f2e5118c2b66490ba097155e0a753331fc2e4d"
-  integrity sha512-wg6CVWEq9WDHssw3jd0jMmJ7dWSVmfaYazcuad4d3cyiJoTxcSjUEp5Q9TiDzmPhJASjk77orh2+r/6WS9Uz7A==
+uplot@^1.6.7:
+  version "1.6.8"
+  resolved "https://registry.yarnpkg.com/uplot/-/uplot-1.6.8.tgz#0a7920018de24fa9aa0ba78ab59c99b4a23f8322"
+  integrity sha512-Hqg7iv/3fJlD9nockD7heaUj28RhrIwzugXglnoX//W27wgRAJIJMV2VFMZ5oRVM0RIchByAle1ylf/GdnXgjA==
 
 uri-js@^4.2.2:
   version "4.4.0"
